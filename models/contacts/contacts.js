@@ -42,7 +42,10 @@ const updateContactById = async (id, data) => {
     const contacts = await listContacts();
     const itemIndex = contacts.findIndex((item) => item.id === id);
     if (itemIndex === -1) return null;
-    contacts[itemIndex] = { id, ...data };
+
+    const contactsItem = contacts[itemIndex]; //! Changes here
+    contacts[itemIndex] = { ...contactsItem, ...data };
+
     await updateContacts(contacts);
     return contacts[itemIndex];
 };
