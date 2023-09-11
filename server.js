@@ -2,7 +2,6 @@ import app from "./app.js";
 import mongoose from "mongoose";
 
 const { DB_HOST, PORT = 3000 } = process.env;
-//! After the hw is done, don't forget to deploy the project (master branch) to render.com
 
 mongoose
     .connect(DB_HOST)
