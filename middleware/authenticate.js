@@ -7,17 +7,17 @@ const { JWT_SECRET } = process.env;
 
 const authenticate = async (req, res, next) => {
     const { authorization = "" } = req.headers;
-    const [bearer, token] = authorization.split(" ");
+    const [bearer, accessToken] = authorization.split(" ");
 
     if (bearer !== "Bearer") {
         throw HttpError(401);
     }
 
     try {
-        const { id } = jwt.verify(token, JWT_SECRET);
+        const { id } = jwt.verify(accessToken, JWT_SECRET);
         const user = await User.findById(id);
 
-        if (!user || !user.token) {
+        if (!user || !user.accessToken) {
             throw HttpError(401);
         }
 

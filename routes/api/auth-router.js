@@ -9,6 +9,8 @@ authRouter.post("/signup", usersValidation.userSignupValidate, authController.si
 
 authRouter.post("/signin", usersValidation.userSigninValidate, authController.signin);
 
+authRouter.post("/refresh", usersValidation.userRefreshTokenValidate.authController.refresh);
+
 authRouter.get("/current", authenticate, authController.getCurrent);
 
 authRouter.post("/signout", authenticate, authController.signout);

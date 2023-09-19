@@ -41,11 +41,14 @@ const signin = async (req, res) => {
         id,
     };
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "23h" });
-    await User.findByIdAndUpdate(id, { token });
+    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
+    const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+
+    await User.findByIdAndUpdate(id, { accessToken, refreshToken });
 
     res.json({
-        token,
+        accessToken,
+        refreshToken,
     });
 };
 
@@ -59,10 +62,34 @@ const getCurrent = async (req, res) => {
 
 const signout = async (req, res) => {
     const { _id } = req.user;
-    await User.findByIdAndUpdate(_id, { token: "" });
+    await User.findByIdAndUpdate(_id, { accessToken: "", refreshToken: "" });
     res.json({
         message: "Signout success",
     });
+};
+
+const refresh = async (req, res) => {
+    const { refreshToken } = req.body;
+
+    try {
+        const { id } = jwt.verify(refreshToken, JWT_SECRET);
+        const user = await User.findOne({ refreshToken });
+
+        if (!user) {
+            throw HttpError(403);
+        }
+        const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
+        const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+
+        await User.findByIdAndUpdate(id, { accessToken, refreshToken });
+
+        res.json({
+            accessToken,
+            refreshToken,
+        });
+    } catch {
+        throw HttpError(403);
+    }
 };
 
 export default {
@@ -70,4 +97,5 @@ export default {
     signin: ctrlWrapper(signin),
     getCurrent: ctrlWrapper(getCurrent),
     signout: ctrlWrapper(signout),
+    refresh: ctrlWrapper(refresh),
 };

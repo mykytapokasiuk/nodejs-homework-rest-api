@@ -22,7 +22,12 @@ const userSigninSchema = Joi.object({
     }),
 });
 
+const userRefreshTokenSchema = Joi.object({
+    refreshToken: Joi.string().required(),
+});
+
 export default {
     userSignupSchema,
     userSigninSchema,
+    userRefreshTokenSchema,
 };
