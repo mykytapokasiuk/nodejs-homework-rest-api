@@ -1,9 +1,15 @@
 import Joi from "joi";
 
 const contactAddSchema = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().required(),
-    phone: Joi.string().required(),
+    name: Joi.string().required().messages({
+        "any.required": "missing field name",
+    }),
+    email: Joi.string().required().messages({
+        "any.required": "missing field email",
+    }),
+    phone: Joi.string().required().messages({
+        "any.required": "missing field phone",
+    }),
     favorite: Joi.boolean(),
 });
 
@@ -16,7 +22,9 @@ const contactUpdateSchema = Joi.object({
     .max(3);
 
 const contactUpdateFavoriteSchema = Joi.object({
-    favorite: Joi.boolean().required(),
+    favorite: Joi.boolean().required().messages({
+        "any.required": "missing field favorite",
+    }),
 });
 
 export default {

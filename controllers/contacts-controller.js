@@ -3,13 +3,15 @@ import HttpError from "../utils/HttpError.js";
 import { ctrlWrapper } from "../decorators/index.js";
 
 const getAll = async (req, res) => {
-    const result = await Contact.find();
+    const { _id: owner } = req.user;
+    const result = await Contact.find({ owner }).populate("owner", "name email");
     res.json(result);
 };
 
 const getById = async (req, res) => {
     const { id } = req.params;
-    const result = await Contact.findById(id);
+    const { _id: owner } = req.user;
+    const result = await Contact.findOne({ _id: id, owner });
 
     if (!result) {
         throw HttpError(404, `Contact with id=${id} not found `);
@@ -19,13 +21,15 @@ const getById = async (req, res) => {
 };
 
 const add = async (req, res) => {
-    const result = await Contact.create(req.body);
+    const { _id: owner } = req.user;
+    const result = await Contact.create({ ...req.body, owner });
     res.status(201).json(result);
 };
 
 const removeById = async (req, res) => {
     const { id } = req.params;
-    const result = await Contact.findByIdAndDelete(id);
+    const { _id: owner } = req.user;
+    const result = await Contact.findOneAndDelete({ _id: id, owner });
 
     if (!result) {
         throw HttpError(404, `Contact with id=${id} not found `);
@@ -38,10 +42,11 @@ const removeById = async (req, res) => {
 
 const updateById = async (req, res) => {
     const { id } = req.params;
-    const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+    const { _id: owner } = req.user;
+    const result = await Contact.findOneAndUpdate({ _id: id, owner }, req.body, { new: true });
 
     if (!result) {
-        throw HttpError(404, `Contact with id=${id} not found `);
+        throw HttpError(404, `Contact with id=${id} not found`);
     }
 
     res.json(result);
@@ -49,14 +54,11 @@ const updateById = async (req, res) => {
 
 const updateStatusContact = async (req, res) => {
     const { id } = req.params;
-
-    if (req.body === null) {
-        throw HttpError(400, "missing field favorite");
-    }
-    const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+    const { _id: owner } = req.user;
+    const result = await Contact.findOneAndUpdate({ _id: id, owner }, req.body, { new: true });
 
     if (!result) {
-        throw HttpError(404, `Contact with id=${id} not found `);
+        throw HttpError(404);
     }
 
     res.json(result);
