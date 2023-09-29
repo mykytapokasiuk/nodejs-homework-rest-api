@@ -1,5 +1,7 @@
+import fs from "fs/promises";
 import Contact from "../models/Contact.js";
 import HttpError from "../utils/HttpError.js";
+import cloudinary from "../utils/cloudinary.js";
 import { ctrlWrapper } from "../decorators/index.js";
 
 const getAll = async (req, res) => {
@@ -22,7 +24,12 @@ const getById = async (req, res) => {
 
 const add = async (req, res) => {
     const { _id: owner } = req.user;
-    const result = await Contact.create({ ...req.body, owner });
+    const { path: oldPath } = req.file;
+    const { url: avatar } = await cloudinary.uploader.upload(oldPath, {
+        folder: "Nodejs-hw-rest-api/Avatars",
+    });
+    await fs.unlink(oldPath);
+    const result = await Contact.create({ ...req.body, avatar, owner });
     res.status(201).json(result);
 };
 

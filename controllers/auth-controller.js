@@ -41,7 +41,7 @@ const signin = async (req, res) => {
         id,
     };
 
-    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
+    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "75m" }); //! Change to 15 min after refactoring
     const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 
     await User.findByIdAndUpdate(id, { accessToken, refreshToken });
@@ -78,7 +78,7 @@ const refresh = async (req, res) => {
         if (!user) {
             throw HttpError(403);
         }
-        const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
+        const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "75m" }); //! Change to 15 min after refactoring
         const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 
         await User.findByIdAndUpdate(id, { accessToken, refreshToken });
