@@ -26,6 +26,7 @@ const userSchema = new Schema(
         refreshToken: {
             type: String,
         },
+        avatarUrl: String,
     },
     { versionKey: false, timestamps: true }
 );

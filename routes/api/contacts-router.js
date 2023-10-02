@@ -3,15 +3,22 @@ import contactsController from "../../controllers/contacts-controller.js";
 import contactsValidation from "../../middleware/validation/contacts-validation.js";
 import isValidId from "../../middleware/isValidId.js";
 import authenticate from "../../middleware/authenticate.js";
+import upload from "../../middleware/upload.js";
 
 const contactsRouter = express.Router();
+
 contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsController.getAll);
 
 contactsRouter.get("/:id", isValidId, contactsController.getById);
 
-contactsRouter.post("/", contactsValidation.addContactValidate, contactsController.add);
+contactsRouter.post(
+    "/",
+    upload.single("avatar"),
+    contactsValidation.addContactValidate,
+    contactsController.add
+);
 
 contactsRouter.put(
     "/:id",
