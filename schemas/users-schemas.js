@@ -26,8 +26,15 @@ const userRefreshTokenSchema = Joi.object({
     refreshToken: Joi.string().required(),
 });
 
+const userEmailSchema = Joi.object({
+    email: Joi.string().pattern(emailRegexp).required().messages({
+        "any.required": "missing field email",
+    }),
+});
+
 export default {
     userSignupSchema,
     userSigninSchema,
     userRefreshTokenSchema,
+    userEmailSchema,
 };
